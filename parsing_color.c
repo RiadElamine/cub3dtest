@@ -6,19 +6,11 @@
 /*   By: relamine <relamine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 05:41:43 by relamine          #+#    #+#             */
-/*   Updated: 2024/12/08 11:57:23 by relamine         ###   ########.fr       */
+/*   Updated: 2024/12/09 02:19:31 by relamine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
-
-
-char *skip_space(char *line)
-{
-	while (*line == ' ' || *line == '\t' || *line == '\v' || *line == '\f' || *line == '\r')
-		line++;
-	return (line);
-}
 
 int comma_countre(char *line)
 {
@@ -105,115 +97,4 @@ int parsing_color(char *line, t_map *map)
 	else
 		return (2);
 	return (1);
-}
-
-void init_map(t_map *map)
-{
-	map->f.r = -1;
-	map->f.g = -1;
-	map->f.b = -1;
-	map->c.r = -1;
-	map->c.g = -1;
-	map->c.b = -1;
-	map->no = NULL;
-	map->so = NULL;
-	map->we = NULL;
-	map->ea = NULL;
-}
-
-void free_map(t_map *map)
-{
-	if (map->no)
-		free(map->no);
-	if (map->so)
-		free(map->so);
-	if (map->we)
-		free(map->we);
-	if (map->ea)
-		free(map->ea);
-}
-
-void f()
-{
-	system("leaks a.out");
-}
-
-int skip_line_empty(char *line)
-{
-	while (*line)
-	{
-		if (*line != ' ' && *line != '\t' && *line != '\v' && *line != '\f' && *line != '\r' && *line != '\n')
-			return (0);
-		line++;
-	}
-	return (1);
-}
-
-
-int is_texture_valid(t_map *map)
-{
-	int no;
-	int so;
-	int we;
-	int ea;
-
-	no = open(map->no, O_RDONLY);
-	if (no == -1)
-		return (0);
-	so = open(map->so, O_RDONLY);
-	if (so == -1)
-		return ( close(no), 0);
-	we = open(map->we, O_RDONLY);
-	if (we == -1)
-		return (close(no), close(so), 0);
-	ea = open(map->ea, O_RDONLY);
-	if (ea == -1)
-		return (close(no), close(so), close(we), 0);
-	close(no);
-	close(so);
-	close(we);
-	close(ea);
-	return (1);
-}
-
-int main(int argc, char **argv)
-{
-	t_map map;
-	int status;
-	int i;
-	int counter;
-
-	i = 1;
-	counter = 0;
-	atexit(f);
-	init_map(&map);
-	while (i < argc)
-	{
-		if (skip_line_empty(argv[i]))
-		{
-			i++;
-			if (i == argc && (counter != 6 || !is_texture_valid(&map)))
-					return (printf("Error\n"), free_map(&map), 1);
-			continue;
-		}
-		status = parsing_color(argv[i], &map);
-		if (status == 0)
-			return (printf("Error\n"), free_map(&map), 1);
-		else if (status == 2)
-		{
-			status = parsing_texture(argv[i], &map, counter);
-			if (status == 2)
-			{
-				if (counter != 6 || !is_texture_valid(&map))
-					return (printf("Error\n"), free_map(&map), 1);
-				// hna fin khasak t3ayat 3la map_parsing
-				continue;;
-			}
-			else if (status == 0)
-				return (printf("Error\n"), free_map(&map), 1);
-		}
-		counter++;
-		i++;
-	}
-
 }
