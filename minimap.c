@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minimap.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: relamine <relamine@student.42.fr>          +#+  +:+       +#+        */
+/*   By: saharchi <saharchi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 11:54:27 by relamine          #+#    #+#             */
-/*   Updated: 2024/12/17 19:13:46 by relamine         ###   ########.fr       */
+/*   Updated: 2024/12/18 23:18:02 by saharchi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ void draw_minimap(t_map *p_map, mlx_image_t* img)
 
 void minimap(t_map *p_map, mlx_t* mlx)
 {
-	mlx_image_t* minimap = mlx_new_image(mlx, M_WIDTH, M_HEIGHT);
+	mlx_image_t* minimap = mlx_new_image(mlx, WIDTH, HEIGHT);
 	if (!minimap || (mlx_image_to_window(mlx, minimap, 0, 0) < 0))
 		printf("*Error\n"), exit(1);
 

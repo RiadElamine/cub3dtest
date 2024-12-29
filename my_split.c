@@ -22,10 +22,10 @@ static const char	*skip_separator(const char *p, char *c)
 static int	rows(const char *s, char *c)
 {
 	int	nblignes;
-	int	i;
+	// int	i;
 
 	nblignes = 0;
-	i = 0;
+	// i = 0;
 	while (*s)
 	{
 		s = skip_separator(s, c);

@@ -6,7 +6,7 @@
 /*   By: relamine <relamine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/07 15:30:32 by saharchi          #+#    #+#             */
-/*   Updated: 2024/12/18 23:37:23 by relamine         ###   ########.fr       */
+/*   Updated: 2024/12/25 02:27:22 by relamine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,15 +33,14 @@
 
 // map size
 #define WIDTH 1200
-#define HEIGHT 1200
+#define HEIGHT 1000
 #define M_WIDTH (WIDTH / 4)
 #define M_HEIGHT (HEIGHT / 4)
 
 // raycasting
-#define FOV 30
-#define player_angle  M_PI / 2
-#define TILE_SIZE 20
-
+#define FOV 60
+#define TILE_SIZE 30
+#define DIST_PROJ_PLANE (WIDTH / (2 * tan((FOV * M_PI / 180) / 2)))
 
 
 typedef struct s_color
@@ -51,21 +50,20 @@ typedef struct s_color
 	int b;
 } t_color;
 
-enum e_direction
-{
-	N,
-	S,
-	E,
-	W, 
-};
-
 
 typedef struct s_player
 {
 	mlx_image_t*	player;
 	int x;
 	int y;
-	int dir;
+	double x_double;
+	double y_double;
+	double rot_angle;
+	int walk_dir; // -1 for back, 1 for front
+	int walk_side; // -1 for move left, 1 for right
+	int turn_dir; // -1 for left, 1 for right
+	double walk_speed;
+	double turn_speed;
 } t_player;
 
 typedef struct s_ray
@@ -77,6 +75,8 @@ typedef struct s_ray
 typedef struct s_map
 {
     char **map;
+	double x_inter;
+	double y_inter;
 	int	cell_width;
 	int	cell_height;
     int fd;
@@ -87,6 +87,9 @@ typedef struct s_map
 	t_color f;
 	t_color c;
 	t_player player;
+	mlx_t* mlx;
+	mlx_image_t* map_img;
+	mlx_texture_t *textures[4];
 } t_map;
 
 
@@ -111,7 +114,7 @@ int		skip_line_empty(char *line);
 char	*skip_space(char *line);
 void	init_map(t_map **p_map);
 void	free_map(t_map *map);
-int		parse_map(t_map *p_map);
+void		parse_map(t_map *p_map);
 int		check_namnf(t_map *p_map, char *av);
 void	get_posplayer(t_map *p_map, int i, int j);
 

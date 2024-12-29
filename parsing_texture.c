@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_texture.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: saharchi <saharchi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: relamine <relamine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 08:32:55 by relamine          #+#    #+#             */
-/*   Updated: 2024/12/09 18:43:40 by saharchi         ###   ########.fr       */
+/*   Updated: 2024/12/26 05:12:19 by relamine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,20 +41,27 @@ int is_texture_valid(t_map *map)
 char *get_value(char *line, char **texture, int *status)
 {
 	int argc;
+	char *sub;
+	char *tmp;
+	char *texture_path;
 
 	argc = ft_count(texture);
 	if (argc >= 3)
 	{
-		char *tmp = ft_strnstr(line, texture[0], ft_strlen(line));
+		tmp = ft_strnstr(line, texture[0], ft_strlen(line));
 		if (!tmp)
-			return (ft_free(texture), *status = 0, NULL);
-		tmp = ft_substr(tmp, ft_strlen(texture[0]), ft_strlen(tmp) - 2);
-		tmp = ft_strtrim(tmp, " \t\v\f\r\n");
-		if (!tmp)
-			return (ft_free(texture), *status = 0, NULL);
-		return (*status = 1, tmp);
+			return (*status = 0, NULL);
+		sub = ft_substr(tmp, ft_strlen(texture[0]), ft_strlen(tmp) - 2);
+		texture_path = ft_strtrim(sub, " \t\v\f\r\n");
+		if (!texture_path)
+			return (free(sub), *status = 0, NULL);
+		free(sub);
+		return (*status = 1, texture_path);
 	}
-	return (*status = 1, texture[1]);
+	texture_path = ft_strdup(texture[1]);
+	if (!texture_path)
+		return (*status = 0, NULL);
+	return (*status = 1, texture_path);
 }
 
 int parsing_texture(char *line, t_map *map, int counter)
@@ -79,10 +86,10 @@ int parsing_texture(char *line, t_map *map, int counter)
 	else if (!ft_strcmp(texture[0], "EA"))
 		map->ea = get_value(line, texture, &status);
 	else
-		return (ft_free(texture), 0);
+		status = 0;
 	if (!status)
 		return (ft_free(texture), 0);
 	if (map->no && map->so && map->we && map->ea)
-		return (free(texture[0]), free(texture), is_texture_valid(map));
-	return (free(texture[0]), free(texture), 1);
+		return (ft_free(texture), is_texture_valid(map));
+	return (ft_free(texture), 1);
 }

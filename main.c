@@ -6,7 +6,7 @@
 /*   By: relamine <relamine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/07 15:30:37 by saharchi          #+#    #+#             */
-/*   Updated: 2024/12/17 17:35:52 by relamine         ###   ########.fr       */
+/*   Updated: 2024/12/27 02:10:11 by relamine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,32 +29,40 @@ void check_newline(char *map_oned, t_map *map)
 		{
 			printf("Error\n");
 			free(map_oned);
-			free(map);
+			free_map(map);
 			exit(1);
 		}
 		i++;
 	}
 }
 
+void leaks(void)
+{
+	system("leaks cub3D");
+}
+
 int main(int argc, char **argv)
 {
 	t_map	*p_map;
 	int		status;
-	int		i;
+	// int		i;
 	int		counter;
 	char	*line;
 	char	*map_oned;
-	char	**map;
+	// char	**map;
 	int		is_map;
 
-	i = 1;
+	// i = 1;
+	// atexit(leaks);
 	counter = 0;
 	map_oned = NULL;
-	map = NULL;
+	// map = NULL;
 	is_map = 0;
 	init_map(&p_map);
-    if (argc != 2 || !check_namnf(p_map, argv[1]))
+    if (argc != 2 || !ft_strchr(argv[1], '.') || !check_namnf(p_map, argv[1]))
+	{
         return (free_map(p_map), 1);
+	}
 	// atexit(f);
 	while ((line = get_next_line(p_map->fd)))
 	{
@@ -71,7 +79,7 @@ int main(int argc, char **argv)
 			status = parsing_texture(line, p_map, counter);
 			if (status == 2)
 			{
-				if ((counter != 6 || !is_texture_valid(p_map)) && !is_map)
+				if (counter != 6 || (!is_texture_valid(p_map) && !is_map))
 					return (printf("Error\n"), free(line), free_map(p_map), 1);
 				map_oned = ft_strjoin(map_oned, line);
 				if (!map_oned)
@@ -86,7 +94,7 @@ int main(int argc, char **argv)
 		counter++;
 		free(line);
 	}
-	if (counter != 6 || !is_texture_valid(p_map))
+	if ( !map_oned || counter != 6 || !is_texture_valid(p_map))
 		return (printf("Error\n"), free_map(p_map), 1);
 	else
 	{
