@@ -6,7 +6,7 @@
 /*   By: relamine <relamine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/15 17:35:21 by saharchi          #+#    #+#             */
-/*   Updated: 2024/12/27 04:34:45 by relamine         ###   ########.fr       */
+/*   Updated: 2024/12/30 10:46:41 by relamine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,22 +126,23 @@ double get_vertical(t_map *p_map, double ray_angle)
 void _texters(double yp, int *colors, mlx_texture_t *texture , t_map *p_map)
 {
     double pos;
-    int x, y;
+    int x;
+    int y;
+    int pixel_index;
 
     if (p_map->x_inter != -1)
         pos = fmod(p_map->x_inter, TILE_SIZE) / TILE_SIZE;
     else
         pos = fmod(p_map->y_inter, TILE_SIZE) / TILE_SIZE;
-
+ 
     x = (int)(pos * texture->width);
-    y = (int)(yp * texture->height);
-        
+    y = (int)(yp * texture->height);        
     if (x ==(int)texture->width)
      x = texture->width - 1;
     if (y == (int)texture->height)
      y = texture->height - 1;
 
-    int pixel_index = (y * texture->width + x) * texture->bytes_per_pixel;
+    pixel_index = (y * texture->width + x) * texture->bytes_per_pixel;
     colors[0] = texture->pixels[pixel_index];
     colors[1] = texture->pixels[pixel_index + 1];
     colors[2] = texture->pixels[pixel_index + 2];
@@ -160,10 +161,8 @@ mlx_texture_t *ft_whiche_texture( mlx_texture_t *texture[4], double ray_angle, i
 }
 
 
-void raycasting(t_map *p_map, mlx_t *mlx, mlx_image_t *map)
+void raycasting(t_map *p_map)
 {
-    (void)mlx;
-
     double ray_angle, distance_h, distance_v, distance;
     double wall_height, wall_top, wall_bottom;
     double angle_increment = FOV * (M_PI / 180) / WIDTH;
@@ -203,20 +202,19 @@ void raycasting(t_map *p_map, mlx_t *mlx, mlx_image_t *map)
             wall_top = 0;
 
         y = 0;
-        while (y <= HEIGHT)
+        while (y < HEIGHT)
         {
-            if (y >= wall_top && y <= wall_bottom && y <= HEIGHT)
+            if (y >= wall_top && y <= wall_bottom && y < HEIGHT)
             {
                 _texters(1.0 - (wall_bottom - y) / wall_height, color, texture, p_map);
-                mlx_put_pixel(map, i, y, get_rgba(color[0], color[1], color[2], color[3]));
+                mlx_put_pixel(p_map->map_img, i, y, get_rgba(color[0], color[1], color[2], color[3]));
             }
             else if (y > (HEIGHT / 2))
-                mlx_put_pixel(map, i, y, get_rgba(p_map->c.r, p_map->c.g, p_map->c.b, 255));
+                mlx_put_pixel(p_map->map_img, i, y, get_rgba(p_map->c.r, p_map->c.g, p_map->c.b, 255));
             else
-                mlx_put_pixel(map, i, y, get_rgba(p_map->f.r, p_map->f.g, p_map->f.b, 255));
+                mlx_put_pixel(p_map->map_img, i, y, get_rgba(p_map->f.r, p_map->f.g, p_map->f.b, 255));
             y++;
         }
-
         ray_angle += angle_increment;
         i++;
     }

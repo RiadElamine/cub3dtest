@@ -6,7 +6,7 @@
 /*   By: relamine <relamine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 08:32:55 by relamine          #+#    #+#             */
-/*   Updated: 2024/12/26 05:12:19 by relamine         ###   ########.fr       */
+/*   Updated: 2024/12/30 10:41:33 by relamine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,27 +14,18 @@
 
 int is_texture_valid(t_map *map)
 {
-	int no;
-	int so;
-	int we;
-	int ea;
-
-	no = open(map->no, O_RDONLY);
-	if (no == -1)
-		return (0);
-	so = open(map->so, O_RDONLY);
-	if (so == -1)
-		return ( close(no), 0);
-	we = open(map->we, O_RDONLY);
-	if (we == -1)
-		return (close(no), close(so), 0);
-	ea = open(map->ea, O_RDONLY);
-	if (ea == -1)
-		return (close(no), close(so), close(we), 0);
-	close(no);
-	close(so);
-	close(we);
-	close(ea);
+	map->textures[0] = mlx_load_png(map->no);
+	if (!map->textures[0])
+		return (free_map(map), exit(1), 0);
+    map->textures[1] = mlx_load_png(map->so);
+	if (!map->textures[1])
+		return (free_map(map), exit(1), 0);
+    map->textures[2] = mlx_load_png(map->we);
+	if (!map->textures[2])
+		return (free_map(map), exit(1), 0);
+    map->textures[3] = mlx_load_png(map->ea);
+	if (!map->textures[3])
+		return (free_map(map), exit(1), 0);
 	return (1);
 }
 
@@ -90,6 +81,20 @@ int parsing_texture(char *line, t_map *map, int counter)
 	if (!status)
 		return (ft_free(texture), 0);
 	if (map->no && map->so && map->we && map->ea)
-		return (ft_free(texture), is_texture_valid(map));
+	{
+		int is_valid = is_texture_valid(map);
+		if (is_valid)
+		{
+			free(map->so);
+			free(map->we);
+			free(map->ea);
+			free(map->no);
+			map->so = NULL;
+			map->we = NULL;
+			map->ea = NULL;
+			map->no = NULL;
+		}
+		return (ft_free(texture), is_valid);
+	}
 	return (ft_free(texture), 1);
 }

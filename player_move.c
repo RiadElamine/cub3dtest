@@ -6,13 +6,13 @@
 /*   By: relamine <relamine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 15:55:56 by relamine          #+#    #+#             */
-/*   Updated: 2024/12/27 04:00:36 by relamine         ###   ########.fr       */
+/*   Updated: 2024/12/30 10:50:29 by relamine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-int hit_wall(t_map *p_map, double x, double y, double player_width, double player_height)
+int hit_wall(t_map *p_map, double x, double y)
 {
     int map_x_start;
     int map_y_start;
@@ -21,10 +21,10 @@ int hit_wall(t_map *p_map, double x, double y, double player_width, double playe
 	int i;
 	int j;
 
-    map_x_start = floor((x - player_width / 2) / TILE_SIZE);
-    map_y_start = floor((y - player_height / 2) / TILE_SIZE);
-    map_x_end = floor((x + player_width / 2) / TILE_SIZE);
-    map_y_end = floor((y + player_height / 2) / TILE_SIZE);
+    map_x_start = floor((x - (TILE_SIZE / 3) / 2) / TILE_SIZE);
+    map_y_start = floor((y - (TILE_SIZE / 3) / 2) / TILE_SIZE);
+    map_x_end = floor((x + (TILE_SIZE / 3) / 2) / TILE_SIZE);
+    map_y_end = floor((y + (TILE_SIZE / 3) / 2) / TILE_SIZE);
 
     i = map_x_start;
     while (i <= map_x_end)
@@ -48,13 +48,6 @@ void close_win(void *param)
 	t_map *p_map;
 
 	p_map = (t_map*)param;
-	mlx_delete_texture( p_map->textures[0]);
-    mlx_delete_texture( p_map->textures[1]);
-    mlx_delete_texture( p_map->textures[2]);
-    mlx_delete_texture( p_map->textures[3]);
-	mlx_delete_image(p_map->mlx, p_map->map_img);
-	mlx_delete_image(p_map->mlx, p_map->player.player);
-	mlx_terminate(p_map->mlx);
 	free_map(p_map);
 	exit(0);
 }
@@ -127,17 +120,17 @@ void keyfunc(mlx_key_data_t keydata, void* param)
 		y_player += movestep * sin(p_map->player.rot_angle);
 		x_player += movestep * cos(p_map->player.rot_angle);	
 	}
-	if (!hit_wall(p_map, x_player, y_player, TILE_SIZE / 3 , TILE_SIZE / 3))
+	if (!hit_wall(p_map, x_player, y_player))
 	{
 		p_map->player.y_double = y_player;
 		p_map->player.x_double = x_player;
 	}
-	raycasting(p_map, p_map->mlx, p_map->map_img);
+	raycasting(p_map);
 	key_release(p_map);
 }
 
-void move_player(t_map *p_map, mlx_t* mlx)
+void move_player(t_map *p_map)
 {
-	mlx_key_hook(mlx, keyfunc, p_map);
-	mlx_close_hook(mlx, close_win, p_map);
+	mlx_key_hook(p_map->mlx, keyfunc, p_map);
+	mlx_close_hook(p_map->mlx, close_win, p_map);
 }

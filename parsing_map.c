@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_map.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: saharchi <saharchi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: relamine <relamine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 18:47:41 by saharchi          #+#    #+#             */
-/*   Updated: 2024/12/18 23:44:27 by saharchi         ###   ########.fr       */
+/*   Updated: 2024/12/30 10:53:16 by relamine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ void valid_line(char **line, int i, t_map *p_map, int *cou)
 			if (check_space(line, i, j) || j >= (int)ft_strlen(line[i - 1]) || j >= (int)ft_strlen(line[i + 1]))
 			{
 				printf("Error\n");
+				free_map(p_map);
 				exit(1);
 			}
 			get_posplayer(p_map, i, j);
@@ -97,6 +98,7 @@ void valid_line(char **line, int i, t_map *p_map, int *cou)
 		if (line[i][j] == '0' && (check_space(line, i, j) || j >= (int)ft_strlen(line[i - 1]) || j >= (int)ft_strlen(line[i + 1])))
 		{
 			printf("Error\n");
+			free_map(p_map);
 			exit(1);
 		}
 		j++;
@@ -119,6 +121,7 @@ void parse_map(t_map *p_map)
 		{
 			printf("Error\n");
 			free(check);
+			free_map(p_map);
 			exit(1);
 		}
 		valid_line(p_map->map, i, p_map, &cou);
@@ -128,6 +131,7 @@ void parse_map(t_map *p_map)
 	if (cou != 1)
 	{
 		printf("Error\n");
+		free_map(p_map);
 		exit(1);
 	}
 }
